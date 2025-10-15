@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>KL Student Portfolio</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+    }
+
+    header, section, footer {
+      padding: 20px;
+      text-align: center;
+    }
+
+    header {
+      background-color: brown;
+      color: white;
+    }
+
+    .projects {
+      background-color: blanchedalmond;
+    }
+
+    .project-list {
+      display: flex;
+      justify-content: center;
+      padding: 20px 0;
+    }
+
+    .project {
+      background-color: purple;
+      padding: 15px;
+      border-radius: 8px;
+      width: 200px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    footer {
+      background-color: black;
+      color: white;
+    }
+
+    /* 📱 Responsive Design */
+    @media (max-width: 600px) {
+      .project-list {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .project {
+        width: 80%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Sridhar Dash</h1>
+    <p>Web Developer | Student at KL University</p>
+  </header>
+
+  <section class="projects">
+    <h2>My Projects</h2>
+    <div class="project-list">
+      <div class="project">Tic Tac Toe</div>
+      <div class="project">Rock Paper Scissors</div>
+      <div class="project">OTT website prototype</div>
+    </div>
+  </section>
+
+  <footer>
+    <p>© 2025 Sridhar Dash</p>
+  </footer>
+</body>
+</html>
