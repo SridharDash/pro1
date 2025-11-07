@@ -1,0 +1,127 @@
+feedbackSlice.js
+
+import { createSlice } from "@reduxjs/toolkit";
+
+const feedbackSlice = createSlice({
+  name: "feedback",
+  initialState: {
+    entries: []
+  },
+  reducers: {
+    addFeedback: (state, action) => {
+      state.entries.push(action.payload);
+    },
+  },
+});
+
+export const { addFeedback } = feedbackSlice.actions;
+export default feedbackSlice.reducer;
+
+
+import { configureStore } from "@reduxjs/toolkit";
+import feedbackReducer from "./feedbackSlice";
+
+const store = configureStore({
+  reducer: {
+    feedback: feedbackReducer,
+  },
+});
+
+
+
+FeedbackForm.jsx
+
+import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import { addFeedback } from "./feedbackSlice";
+
+const FeedbackForm = () => {
+  const dispatch = useDispatch();
+  const [rating, setRating] = useState("");
+  const [comment, setComment] = useState("");
+  const [error, setError] = useState("");
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!rating) {
+      setError("Rating is required");
+      return;
+    }
+    dispatch(addFeedback({ rating: Number(rating), comment }));
+    setRating("");
+    setComment("");
+    setError("");
+  };
+
+  return (
+    <form
+      onSubmit={handleSubmit}
+      className="max-w-md mx-auto p-4 bg-white shadow rounded"
+    >
+      <h2 className="text-lg font-semibold mb-2">Session Feedback</h2>
+      <label className="block mb-2">
+        <span className="text-gray-700">Rating (1-5)*</span>
+        <select
+          className="block w-full border border-gray-300 rounded px-2 py-1 mt-1"
+          value={rating}
+          onChange={(e) => setRating(e.target.value)}
+          required
+        >
+          <option value="">Select</option>
+          {[1,2,3,4,5].map(num => (
+            <option key={num} value={num}>{num}</option>
+          ))}
+        </select>
+      </label>
+      <label className="block mb-2">
+        <span className="text-gray-700">Comments (optional)</span>
+        <textarea
+          className="block w-full border border-gray-300 rounded px-2 py-1 mt-1"
+          value={comment}
+          onChange={(e) => setComment(e.target.value)}
+          rows={3}
+        />
+      </label>
+      {error && <div className="mb-2 text-red-600">{error}</div>}
+      <button
+        type="submit"
+        className="mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+      >
+        Submit Feedback
+      </button>
+    </form>
+  );
+};
+
+export default FeedbackForm;
+
+
+FeedbackList.jsx
+
+import React from "react";
+import { useSelector } from "react-redux";
+
+const FeedbackList = () => {
+  const entries = useSelector((state) => state.feedback.entries);
+
+  return (
+    <div className="max-w-md mx-auto mt-6">
+      <h3 className="text-md font-bold mb-2">Submitted Feedback</h3>
+      <ul className="space-y-3">
+        {entries.map((item, idx) => (
+          <li
+            key={idx}
+            className="bg-gray-100 p-3 rounded shadow flex flex-col"
+          >
+            <span className="font-semibold">Rating: {item.rating}</span>
+            {item.comment && (
+              <span className="text-sm text-gray-700 mt-1">
+                Comment: {item.comment}
+              </span>
+            )}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+};
