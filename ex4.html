@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Sweet Spot Bakery</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Custom Styles for Slideshow and Fixed Nav */
+        body {
+            font-family: 'Inter', sans-serif;
+            padding-top: 64px; /* Space for the fixed navigation bar */
+        }
+
+        /* 2. Implement CSS Positioning: Fixed Navigation Bar */
+        .fixed-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 50; /* Ensure it stays above other content */
+        }
+
+        /* 3. Featured Product Slideshow */
+        .slideshow-container {
+            position: relative;
+            overflow: hidden;
+            height: 400px; /* Fixed height for the slideshow area */
+        }
+
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .slide.active {
+            opacity: 1;
+        }
+
+        /* Custom Keyframe Example (Not used in this JS approach, but demonstrates Task 3 concept)
+        @keyframes fadeInOut {
+            0% { opacity: 0; }
+            10% { opacity: 1; }
+            25% { opacity: 1; }
+            35% { opacity: 0; }
+            100% { opacity: 0; }
+        }
+        .animated-slide {
+            animation: fadeInOut 12s infinite;
+        }
+        */
+
+        /* Custom style for the Contact button */
+        .contact-button {
+            transition: all 0.2s ease-in-out;
+        }
+        .contact-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(255, 165, 0, 0.4);
+        }
+
+        /* 4. Make the layout responsive: Media Query */
+        @media (min-width: 1024px) {
+            /* Desktop/Large screen styles */
+            .main-content {
+                max-width: 1280px;
+                margin: 0 auto;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <!-- 1. Semantic HTML5: Header & Nav (Fixed Position) -->
+    <header class="fixed-nav w-full bg-white shadow-lg border-b border-orange-100">
+        <nav class="flex justify-between items-center px-4 py-3 lg:px-8">
+            <div class="text-2xl font-bold text-orange-600">The Sweet Spot</div>
+            <!-- Navigation Links -->
+            <div class="flex space-x-4">
+                <a href="#products" class="text-gray-600 hover:text-orange-500 transition duration-150">Products</a>
+                <a href="#about" class="text-gray-600 hover:text-orange-500 transition duration-150">About</a>
+                <a href="#contact" class="text-gray-600 hover:text-orange-500 transition duration-150">Contact</a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+        <!-- Hero Section -->
+        <section class="p-8 lg:p-16 bg-orange-50">
+            <div class="max-w-4xl mx-auto text-center">
+                <h1 class="text-4xl lg:text-5xl font-extrabold text-gray-900 mb-4">Freshly Baked, Just for You.</h1>
+                <p class="text-lg text-gray-600 mb-8">Discover our artisanal breads, decadent pastries, and custom cakes—made with love and the finest ingredients.</p>
+                <a href="#products" class="inline-block px-6 py-3 bg-orange-500 text-white font-semibold rounded-full hover:bg-orange-600 contact-button">View Our Products</a>
+            </div>
+        </section>
+
+        <!-- 3. Featured Product Slideshow Section -->
+        <section id="products" class="py-12 px-4 lg:px-8 bg-white">
+            <h2 class="text-3xl font-bold text-center text-gray-800 mb-8">Featured Treats</h2>
+            <div class="slideshow-container rounded-xl shadow-2xl">
+                <!-- Slide 1: Chocolate Cake -->
+                <div class="slide active" data-index="0" style="background-image: url('https://placehold.co/1200x400/f5a50b/ffffff?text=Decadent+Chocolate+Cake');">
+                    <div class="absolute inset-0 bg-black bg-opacity-30 flex items-end p-8">
+                        <h3 class="text-white text-3xl font-bold">The Signature Chocolate Cake</h3>
+                    </div>
+                </div>
+                <!-- Slide 2: Sourdough Bread -->
+                <div class="slide" data-index="1" style="background-image: url('https://placehold.co/1200x400/9b59b6/ffffff?text=Artisan+Sourdough+Bread');">
+                    <div class="absolute inset-0 bg-black bg-opacity-30 flex items-end p-8">
+                        <h3 class="text-white text-3xl font-bold">Artisan Sourdough Loaf</h3>
+                    </div>
+                </div>
+                <!-- Slide 3: Croissant -->
+                <div class="slide" data-index="2" style="background-image: url('https://placehold.co/1200x400/3498db/ffffff?text=Perfect+Flaky+Croissant');">
+                    <div class="absolute inset-0 bg-black bg-opacity-30 flex items-end p-8">
+                        <h3 class="text-white text-3xl font-bold">The Perfect Flaky Croissant</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center mt-4">
+                <span id="dot-0" class="inline-block w-3 h-3 mx-1 bg-orange-500 rounded-full cursor-pointer transition"></span>
+                <span id="dot-1" class="inline-block w-3 h-3 mx-1 bg-gray-300 rounded-full cursor-pointer transition"></span>
+                <span id="dot-2" class="inline-block w-3 h-3 mx-1 bg-gray-300 rounded-full cursor-pointer transition"></span>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="py-12 px-4 lg:px-8 bg-gray-100">
+            <div class="max-w-4xl mx-auto">
+                <h2 class="text-3xl font-bold text-center text-gray-800 mb-6">Our Story</h2>
+                <p class="text-gray-700 leading-relaxed">
+                    Founded in 2010, The Sweet Spot was built on the simple philosophy that great food starts with great ingredients. We source local flour, farm-fresh eggs, and use time-honored techniques to bring you breads and pastries that taste like home. From our ovens to your table, every bite is a commitment to quality.
+                </p>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="py-12 px-4 lg:px-8 bg-white">
+            <div class="max-w-4xl mx-auto text-center">
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">Get in Touch</h2>
+                <p class="text-gray-600 mb-8">Ready for a custom cake order or have a question? Contact us today!</p>
+                <div class="flex justify-center space-x-4">
+                    <a href="mailto:info@sweetspot.com" class="px-6 py-3 bg-blue-500 text-white font-semibold rounded-full hover:bg-blue-600 contact-button">Email Us</a>
+                    <a href="tel:+15551234567" class="px-6 py-3 bg-green-500 text-white font-semibold rounded-full hover:bg-green-600 contact-button">Call Now</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 1. Semantic HTML5: Footer -->
+    <footer class="bg-gray-800 text-white p-6 text-center">
+        <p>&copy; 2025 The Sweet Spot Bakery. All rights reserved.</p>
+        <p class="text-sm mt-2">123 Cake Lane, Flavor Town</p>
+    </footer>
+
+    <!-- JavaScript for Auto-Playing Slideshow -->
+    <script>
+        // 3. Create a featured product slideshow: Auto-play functionality
+        const slides = document.querySelectorAll('.slide');
+        const dots = document.querySelectorAll('[id^="dot-"]');
+        let currentSlide = 0;
+        let slideInterval;
+
+        // Function to show a specific slide
+        function showSlide(index) {
+            // Remove active class from all slides and dots
+            slides.forEach(slide => slide.classList.remove('active'));
+            dots.forEach(dot => dot.classList.replace('bg-orange-500', 'bg-gray-300'));
+
+            // Add active class to the current slide and corresponding dot
+            slides[index].classList.add('active');
+            dots[index].classList.replace('bg-gray-300', 'bg-orange-500');
+
+            currentSlide = index;
+        }
+
+        // Function to move to the next slide
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % slides.length;
+            showSlide(currentSlide);
+        }
+
+        // Start the automatic slideshow transition
+        function startSlideshow() {
+            // Clear any existing interval to prevent duplicates
+            clearInterval(slideInterval);
+            // Set new interval (changes every 4 seconds)
+            slideInterval = setInterval(nextSlide, 4000);
+        }
+
+        // Event listeners for dots (manual control)
+        dots.forEach(dot => {
+            dot.addEventListener('click', () => {
+                const index = parseInt(dot.id.split('-')[1]);
+                showSlide(index);
+                // Reset the auto-play timer on manual interaction
+                startSlideshow();
+            });
+        });
+
+        // Initialize the slideshow when the page loads
+        window.onload = function() {
+            showSlide(currentSlide); // Show the first slide
+            startSlideshow();        // Begin auto-play
+        }
+    </script>
+</body>
+</html>
