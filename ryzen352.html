@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Racing Learn Game</title>
+  <style>
+    body {margin:0; padding:0; background:#111; color:#fff; font-family:sans-serif; overflow:hidden;}
+    #gameCanvas {background:#222; display:block; margin:0 auto;}
+    #ui {position:absolute; top:10px; left:50%; transform:translateX(-50%); text-align:center;}
+    #question {font-size:20px; margin-bottom:8px;}
+    .choice {display:inline-block; margin:0 10px; padding:6px 10px; background:#333; border-radius:6px;}
+    #score {margin-top:6px;}
+  </style>
+</head>
+<body>
+  <canvas id="gameCanvas" width="800" height="500"></canvas>
+  <div id="ui">
+    <div id="question">Press Start and choose a topic!</div>
+    <div id="choices"></div>
+    <div id="score">Score: 0</div>
+    <input id="keyword" type="text" placeholder="Type a keyword" />
+    <button id="startBtn">Start</button>
+  </div>
+
+<script>
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+const questionEl = document.getElementById('question');
+const choicesDiv = document.getElementById('choices');
+const scoreEl = document.getElementById('score');
+const keywordInput = document.getElementById('keyword');
+const startBtn = document.getElementById('startBtn');
+
+let car = {x:400,y:420,w:40,h:60,speed:5};
+let loops = []; // answer loops
+let questions = [];
+let currentQ = 0;
+let score = 0;
+let playing = false;
+
+startBtn.onclick = ()=>{
+  const kw = keywordInput.value.trim();
+  if(!kw) return;
+  startGame(kw);
+};
+
+async function startGame(keyword){
+  const summary = await fetchSummary(keyword);
+  const sentences = splitIntoSentences(summary.extract||'');
+  questions = buildQuestionsFromSentences(sentences,5);
+  if(questions.length===0){alert('No questions. Try another keyword');return;}
+  currentQ=0; score=0; playing=true; nextQuestion();
+}
+
+function nextQuestion(){
+  if(currentQ>=questions.length){playing=false; questionEl.innerText="Game Over! Final Score: "+score; choicesDiv.innerHTML=''; return;}
+  const q = questions[currentQ];
+  questionEl.innerText=q.blank;
+  choicesDiv.innerHTML='';
+  loops=[];
+  const spacing = canvas.width/(q.choices.length+1);
+  q.choices.forEach((c,i)=>{
+    const loop={x:spacing*(i+1),y:150,r:40,answer:c};
+    loops.push(loop);
+    const btn=document.createElement('span');
+    btn.className='choice'; btn.innerText=c;
+    choicesDiv.appendChild(btn);
+  });
+  car.x=canvas.width/2; car.y=420;
+}
+
+function update(){
+  if(!playing) return;
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  // draw loops
+  loops.forEach(loop=>{
+    ctx.beginPath(); ctx.arc(loop.x,loop.y,loop.r,0,Math.PI*2);
+    ctx.strokeStyle='#0f0'; ctx.lineWidth=3; ctx.stroke();
+    ctx.fillStyle='#555'; ctx.fill();
+    ctx.fillStyle='#fff'; ctx.fillText(loop.answer,loop.x-20,loop.y+5);
+  });
+  // draw car
+  ctx.fillStyle='red'; ctx.fillRect(car.x-car.w/2,car.y-car.h/2,car.w,car.h);
+  // check collision
+  loops.forEach(loop=>{
+    const dx=car.x-loop.x; const dy=car.y-loop.y;
+    if(Math.sqrt(dx*dx+dy*dy)<loop.r){
+      checkAnswer(loop.answer);
+    }
+  });
+}
+
+function checkAnswer(choice){
+  const q=questions[currentQ];
+  if(choice.toLowerCase()===q.answer.toLowerCase()){
+    score+=10; scoreEl.innerText='Score: '+score;
+    currentQ++; nextQuestion();
+  }else{
+    playing=false;
+    questionEl.innerText='Wrong! Correct was '+q.answer;
+  }
+}
+
+function gameLoop(){
+  update(); requestAnimationFrame(gameLoop);
+}
+gameLoop();
+
+window.addEventListener('keydown',e=>{
+  if(!playing) return;
+  if(e.key==='ArrowLeft') car.x-=car.speed;
+  if(e.key==='ArrowRight') car.x+=car.speed;
+  if(e.key==='ArrowUp') car.y-=car.speed;
+  if(e.key==='ArrowDown') car.y+=car.speed;
+});
+
+// Helpers
+async function fetchSummary(keyword){
+  const title = encodeURIComponent(keyword.replace(/\s+/g,'_'));
+  const url = `https://en.wikipedia.org/api/rest_v1/page/summary/${title}`;
+  const res = await fetch(url);
+  return await res.json();
+}
+function splitIntoSentences(text){return text.split(/(?<=[.!?])\s+/).filter(Boolean);}
+function buildQuestionsFromSentences(sentences,count){
+  const chosen=sentences.slice(0,count);
+  const words=(sentences.join(' ').match(/\b[A-Za-z]{4,}\b/g)||[]);
+  const uniq=[...new Set(words.map(w=>w.toLowerCase()))];
+  const qs=[];
+  chosen.forEach(s=>{
+    const target=(s.match(/\b[A-Za-z]{4,}\b/g)||[])[0];
+    if(!target) return;
+    const blank=s.replace(target,'____');
+    const distractors=uniq.filter(w=>w!==target.toLowerCase());
+    const choices=[target,...distractors.slice(0,3)];
+    qs.push({sentence:s,blank,answer:target,choices});
+  });
+  return qs;
+}
+</script>
+</body>
+</html>
