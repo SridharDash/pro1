@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Registration Form</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .font-inter { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4 font-inter">
+
+    <div id="form-container" class="w-full max-w-md bg-white p-8 rounded-xl shadow-2xl border border-gray-200">
+        <h1 class="text-3xl font-extrabold text-gray-900 mb-6 text-center">Register Account</h1>
+        
+        <div id="success-message" class="hidden bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-6 rounded-lg" role="alert">
+            <p class="font-bold">Success!</p>
+            <p>Your registration details are valid and the form was submitted.</p>
+        </div>
+
+        <form id="registrationForm" onsubmit="return handleSubmit(event)">
+            
+            <!-- Full Name Field -->
+            <div class="mb-4">
+                <label for="fullName" class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                <input type="text" id="fullName" name="fullName" required 
+                       class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-150"
+                       onkeyup="validateField(this, validateName)"
+                       placeholder="e.g., Jane Doe">
+                <small id="error-fullName" class="text-xs text-red-500 mt-1 block"></small>
+            </div>
+
+            <!-- Email Field -->
+            <div class="mb-4">
+                <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                <input type="email" id="email" name="email" required 
+                       class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-150"
+                       onkeyup="validateField(this, validateEmail)"
+                       placeholder="you@example.com">
+                <small id="error-email" class="text-xs text-red-500 mt-1 block"></small>
+            </div>
+
+            <!-- Password Field -->
+            <div class="mb-4">
+                <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                <input type="password" id="password" name="password" required minlength="8"
+                       class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-150"
+                       onkeyup="validateField(this, validatePassword)"
+                       placeholder="Minimum 8 characters">
+                <small id="error-password" class="text-xs text-red-500 mt-1 block"></small>
+                <div id="password-feedback" class="text-xs mt-1 space-y-1"></div>
+            </div>
+
+            <!-- Phone Number Field -->
+            <div class="mb-6">
+                <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                <input type="tel" id="phone" name="phone" required pattern="[0-9]{10}"
+                       class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-150"
+                       onkeyup="validateField(this, validatePhone)"
+                       placeholder="10 digit number (e.g., 5551234567)">
+                <small id="error-phone" class="text-xs text-red-500 mt-1 block"></small>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" id="submitBtn" 
+                    class="w-full bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-700 transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                Register
+            </button>
+        </form>
+    </div>
+
+    <script>
+        // Store the state of all required fields
+        const validationState = {
+            fullName: false,
+            email: false,
+            password: false,
+            phone: false
+        };
+
+        // --- VALIDATION FUNCTIONS ---
+
+        function validateName(value) {
+            if (value.trim() === "") {
+                return { valid: false, message: "Full Name is required." };
+            }
+            if (!/^[a-zA-Z\s]{2,}$/.test(value)) {
+                return { valid: false, message: "Name must contain at least two letters and no numbers/symbols." };
+            }
+            return { valid: true, message: "" };
+        }
+
+        function validateEmail(value) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (value.trim() === "") {
+                return { valid: false, message: "Email is required." };
+            }
+            if (!emailRegex.test(value)) {
+                return { valid: false, message: "Please enter a valid email address (e.g., user@domain.com)." };
+            }
+            return { valid: true, message: "" };
+        }
+
+        function validatePassword(value) {
+            const minLength = 8;
+            const hasUpper = /[A-Z]/.test(value);
+            const hasLower = /[a-z]/.test(value);
+            const hasNumber = /[0-9]/.test(value);
+            const hasSpecial = /[!@#$%^&*()]/.test(value);
+
+            const feedbackDiv = document.getElementById('password-feedback');
+            feedbackDiv.innerHTML = `
+                <p class="${value.length >= minLength ? 'text-green-600' : 'text-gray-400'}">&#10003; Min ${minLength} characters</p>
+                <p class="${hasUpper ? 'text-green-600' : 'text-gray-400'}">&#10003; Uppercase letter</p>
+                <p class="${hasNumber ? 'text-green-600' : 'text-gray-400'}">&#10003; Number</p>
+                <p class="${hasSpecial ? 'text-green-600' : 'text-gray-400'}">&#10003; Special character</p>
+            `;
+
+            if (value.length < minLength) {
+                return { valid: false, message: "Password is too short (min 8 characters)." };
+            }
+            if (!hasUpper || !hasLower || !hasNumber || !hasSpecial) {
+                return { valid: false, message: "Password must meet all complexity requirements." };
+            }
+            return { valid: true, message: "" };
+        }
+
+        function validatePhone(value) {
+            const phoneRegex = /^\d{10}$/; // Exactly 10 digits
+            if (value.trim() === "") {
+                return { valid: false, message: "Phone number is required." };
+            }
+            if (!phoneRegex.test(value)) {
+                return { valid: false, message: "Please enter a valid 10-digit phone number (no dashes or spaces)." };
+            }
+            return { valid: true, message: "" };
+        }
+
+
+        // --- DYNAMIC FEEDBACK & DOM MANIPULATION ---
+
+        function updateInputStyle(inputElement, isValid) {
+            const classes = ['border-red-500', 'border-green-500', 'focus:ring-red-500', 'focus:ring-green-500'];
+            
+            // Remove previous validation styles
+            inputElement.classList.remove(...classes);
+
+            if (isValid) {
+                inputElement.classList.add('border-green-500', 'focus:ring-green-500');
+            } else {
+                inputElement.classList.add('border-red-500', 'focus:ring-red-500');
+            }
+        }
+
+        function displayError(inputId, message) {
+            const errorElement = document.getElementById(`error-${inputId}`);
+            if (errorElement) {
+                errorElement.textContent = message;
+            }
+        }
+
+        function validateField(inputElement, validator) {
+            const inputId = inputElement.id;
+            const result = validator(inputElement.value);
+
+            // 1. Update global state
+            validationState[inputId] = result.valid;
+
+            // 2. Update input style and show error message
+            if (result.valid) {
+                updateInputStyle(inputElement, true);
+                displayError(inputId, "");
+            } else {
+                updateInputStyle(inputElement, false);
+                displayError(inputId, result.message);
+            }
+        }
+
+        // Apply event listeners on load
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('fullName').addEventListener('keyup', (e) => validateField(e.target, validateName));
+            document.getElementById('email').addEventListener('keyup', (e) => validateField(e.target, validateEmail));
+            document.getElementById('password').addEventListener('keyup', (e) => validateField(e.target, validatePassword));
+            document.getElementById('phone').addEventListener('keyup', (e) => validateField(e.target, validatePhone));
+            
+            // Initial check for required fields on focus loss (blur)
+            document.querySelectorAll('#registrationForm input').forEach(input => {
+                input.addEventListener('blur', (e) => {
+                    const id = e.target.id;
+                    const validatorMap = {
+                        fullName: validateName,
+                        email: validateEmail,
+                        password: validatePassword,
+                        phone: validatePhone
+                    };
+                    if (validatorMap[id]) {
+                        validateField(e.target, validatorMap[id]);
+                    }
+                });
+            });
+        });
+
+        // --- FORM SUBMISSION HANDLING ---
+
+        function handleSubmit(event) {
+            event.preventDefault(); // Prevent default submission
+            const form = document.getElementById('registrationForm');
+            const successMessage = document.getElementById('success-message');
+
+            // Force validation on all fields before final submission check
+            validateField(document.getElementById('fullName'), validateName);
+            validateField(document.getElementById('email'), validateEmail);
+            validateField(document.getElementById('password'), validatePassword);
+            validateField(document.getElementById('phone'), validatePhone);
+
+            const isFormValid = Object.values(validationState).every(isValid => isValid === true);
+
+            if (isFormValid) {
+                // Task 4: Display success message
+                successMessage.classList.remove('hidden');
+                form.reset(); // Clear the form fields
+
+                // Optional: Hide success message after a few seconds
+                setTimeout(() => {
+                    successMessage.classList.add('hidden');
+                }, 5000);
+                
+                return true; // Form is valid
+            } else {
+                // Task 4: Prevent submission if invalid
+                
+                // Show a brief message if hidden fields are invalid (though field-specific errors are better)
+                if (successMessage.classList.contains('hidden')) {
+                     // Find the first invalid field and scroll to it
+                    const firstInvalid = Object.keys(validationState).find(key => validationState[key] === false);
+                    if(firstInvalid) {
+                        document.getElementById(firstInvalid).focus();
+                    }
+                }
+                
+                return false; // Form is invalid
+            }
+        }
+    </script>
+</body>
+</html>
