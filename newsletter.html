@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Newsletter Box</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f0f4f8;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .newsletter-box {
+      background: #ffffff;
+      padding: 2rem;
+      border-radius: 1rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      max-width: 400px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .newsletter-box h2 {
+      margin-bottom: 1rem;
+      color: #333;
+    }
+
+    .newsletter-box input[type="email"] {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 2px solid #ccc;
+      border-radius: 0.75rem;
+      font-size: 1rem;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .newsletter-box input[type="email"]::placeholder {
+      color: #999;
+      font-style: italic;
+    }
+
+    .newsletter-box input[type="email"]:focus {
+      border-color: #0078D4;
+      box-shadow: 0 0 0 4px rgba(0, 120, 212, 0.2);
+      outline: none;
+    }
+
+    .preferences {
+      margin: 1rem 0;
+      text-align: left;
+    }
+
+    .preferences label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-size: 0.95rem;
+      color: #555;
+    }
+
+    .newsletter-box button {
+      margin-top: 1rem;
+      padding: 0.75rem 1.5rem;
+      background-color: #0078D4;
+      color: white;
+      border: none;
+      border-radius: 0.75rem;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .newsletter-box button:hover {
+      background-color: #005fa3;
+    }
+
+    @media (max-width: 500px) {
+      .newsletter-box {
+        padding: 1.5rem;
+      }
+
+      .newsletter-box h2 {
+        font-size: 1.25rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="newsletter-box">
+    <h2>Subscribe to Our Newsletter</h2>
+    <input type="email" placeholder="Enter your email address" required>
+
+    <div class="preferences">
+      <label><input type="radio" name="preference" value="tech"> Tech Updates</label>
+      <label><input type="radio" name="preference" value="health"> Health & Wellness</label>
+      <label><input type="radio" name="preference" value="lifestyle"> Lifestyle Tips</label>
+    </div>
+
+    <button>Subscribe</button>
+  </div>
+</body>
+</html>
